@@ -1,4 +1,6 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+THis project is based upon these tutorials:
+- https://www.robinwieruch.de/complete-firebase-authentication-react-tutorial/#react-application-setup
 
 ## Available Scripts
 
