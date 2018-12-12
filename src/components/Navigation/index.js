@@ -41,11 +41,11 @@ const NavigationAuth = () => (
 );
 
 const NavigationNonAuth = () => (
-    <ul>
-        <li>
-            <Link to={ROUTES.SIGN_IN}>Sign In</Link>
-        </li>
-    </ul>
+    <NavList>
+        <NavItem>
+            <StyledLink to={ROUTES.SIGN_IN}>Sign In</StyledLink>
+        </NavItem>
+    </NavList>
 );
 
 export default Navigation;
