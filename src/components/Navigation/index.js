@@ -1,11 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 import * as ROUTES from '../../constants/routes';
 import SignOutButton from '../SignOut';
 import { AuthUserContext } from '../Session';
 
-import { Header, LogoLink, LogoDiv, StyledLink, Nav, NavList, NavItem, Spacer } from './NavigationStyle';
+import { LogoLink, LogoDiv, Nav, NavDiv, NavList, NavItem, Spacer } from './NavigationStyle';
+import { StyledLink, Header } from '../StyledComponents';
 
 const Navigation = () => (
     <Header>
@@ -14,11 +14,11 @@ const Navigation = () => (
                 <LogoLink to={ROUTES.LANDING}>MUSIC MANAGER</LogoLink>
             </LogoDiv>
             <Spacer />
-            <div>
+            <NavDiv>
                 <AuthUserContext.Consumer>
                     {authUser => authUser ? <NavigationAuth /> : <NavigationNonAuth />}
                 </AuthUserContext.Consumer>
-            </div>
+            </NavDiv>
         </Nav>
     </Header>
 );
