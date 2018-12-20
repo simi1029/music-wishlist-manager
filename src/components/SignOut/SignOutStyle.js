@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 const Button = styled.button`
-    color: ${props => props.signout ? "red" : "black" };
+    color: ${props => props.signout ? "white" : "black" };
     background: none;
     border: none;
     padding: 0;

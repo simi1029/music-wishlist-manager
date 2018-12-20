@@ -5,3 +5,5 @@ export const HOME = '/home';
 export const ACCOUNT = '/account';
 export const PASSWORD_FORGET = '/forgotten-password';
 export const ADMIN = '/admin';
+export const MUSIC = '/music';
+export const ADD_ALBUM = '/addalbum';

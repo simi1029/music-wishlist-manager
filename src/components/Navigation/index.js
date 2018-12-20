@@ -29,6 +29,9 @@ const NavigationAuth = () => (
             <StyledLink to={ROUTES.HOME}>Home</StyledLink>
         </NavItem>
         <NavItem>
+            <StyledLink to={ROUTES.MUSIC}>Music</StyledLink>
+        </NavItem>
+        <NavItem>
             <StyledLink to={ROUTES.ACCOUNT}>Account</StyledLink>
         </NavItem>
         <NavItem>
