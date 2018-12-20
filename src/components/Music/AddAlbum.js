@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import { withRouter } from 'react-router-dom';
+import NB from 'nodebrainz';
 
 import * as ROUTES from '../../constants/routes';
 
@@ -24,6 +25,8 @@ const INITIAL_STATE = {
     error: null,
 };
 
+const nodeBrainz = new NB({userAgent: 'music-wishlist-app/0.0.1 (url)'});
+
 class AddAlbumPage extends Component {
     constructor(props) {
         super(props);
@@ -32,10 +35,16 @@ class AddAlbumPage extends Component {
     }
 
     onSubmit = event => {
+        const {artist} = this.state;
+        nodeBrainz.search('artist', {artist: artist}, function(err, response){
+            console.log(response);
+        });
         event.preventDefault();
     }
 
-    onSaveAndAdd = event => {}
+    onSaveAndAdd = () => {
+        alert("Save and reset form");
+    }
 
     onChange = event => {
         this.setState({ [event.target.name]: event.target.value });
@@ -44,10 +53,15 @@ class AddAlbumPage extends Component {
     render() {
         const {
             title,
+            subtitle,
+            artist,
+            year,
             error,
         } = this.state;
 
-        const isInvalid = title === '';
+        const currentYear = new Date().getFullYear();
+
+        const isInvalid = title === '' || artist === '' || year < 1900 || year > currentYear;
 
         return (
             <form onSubmit={this.onSubmit}>
@@ -58,8 +72,29 @@ class AddAlbumPage extends Component {
                     type="text"
                     placeholder="Album Title"
                 />
+                <input
+                    name="subtitle"
+                    value={subtitle}
+                    onChange={this.onChange}
+                    type="text"
+                    placeholder="Album Subtitle"
+                />
+                <input
+                    name="artist"
+                    value={artist}
+                    onChange={this.onChange}
+                    type="text"
+                    placeholder="Artist"
+                />
+                <input
+                    name="year"
+                    value={year}
+                    onChange={this.onChange}
+                    type="number"
+                    placeholder="Year"
+                />
                 <button disabled={isInvalid} type="submit">Add Album</button>
-                <button disabled={isInvalid} onClick={this.onSaveAndAdd()}>Save and add another</button>
+                <button disabled={isInvalid} onClick={this.onSaveAndAdd}>Save and add another</button>
 
                 {error && <p>{error.message}</p>}
             </form>
