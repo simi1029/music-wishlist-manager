@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 
 import { withRouter } from 'react-router-dom';
 import NB from 'nodebrainz';
+import Autosuggest from 'react-autosuggest';
 
 import * as ROUTES from '../../constants/routes';
+
 
 const AddAlbumButtonBase = (props) => {
     const onClick = () => {
@@ -22,23 +24,67 @@ const INITIAL_STATE = {
     subtitle: '',
     artist: '',
     year: '',
+    suggestions: [],
+    isLoading: false,
     error: null,
 };
 
-const nodeBrainz = new NB({userAgent: 'music-wishlist-app/0.0.1 (url)'});
+const nodeBrainz = new NB({userAgent: 'music-wishlist-app/0.0.1 (sim.david90+musicbrainz@gmail.com)'});
+
+const getSuggestionValue = suggestion => suggestion.name;
+  
+const renderSuggestion = suggestion => {
+    return (
+        <span>{suggestion.name}</span>
+    );
+}
 
 class AddAlbumPage extends Component {
     constructor(props) {
         super(props);
 
         this.state = { ...INITIAL_STATE };
+
+        this.lasRequestId = null;
     }
 
-    onSubmit = event => {
-        const {artist} = this.state;
-        nodeBrainz.search('artist', {artist: artist}, function(err, response){
-            console.log(response);
+    loadSuggestions(value) {
+        if (this.lasRequestId !== null) {
+            clearTimeout(this.lasRequestId);
+        }
+
+        this.setState({
+            isLoading: true
         });
+
+        this.lasRequestId = setTimeout(() => {
+            nodeBrainz.search('artist', {artist: value}, (error,response) => {
+                this.setState({
+                    isLoading: false,
+                    suggestions: Array.from(response.artists)
+                });
+            });
+        }, 1000);
+    }
+
+    onSuggestionsFetchRequested = ({ value }) => {
+        this.loadSuggestions(value);
+    };
+
+    onSuggestionsClearRequested = () => {
+        this.setState({
+            suggestions: []
+        });
+    };
+
+    // TODO: here will have to save data to state that will be save to firebase about the album (bandid, albumid)
+    onSuggestionSelected = (event, { suggestion, suggestionValue, suggestionIndex, sectionIndex, method }) => {
+        this.setState({
+            selectedBand: suggestion.id
+        });
+    };
+
+    onSubmit = event => {
         event.preventDefault();
     }
 
@@ -50,14 +96,26 @@ class AddAlbumPage extends Component {
         this.setState({ [event.target.name]: event.target.value });
     }
 
+    onChangeArtist = (event, { newValue, method}) => {
+        this.setState({ artist: newValue });
+    }
+
     render() {
         const {
             title,
             subtitle,
             artist,
             year,
+            suggestions,
             error,
         } = this.state;
+
+        const inputProps = {
+            placeholder: "Artist",
+            value: artist,
+            type: "text",
+            onChange: this.onChangeArtist
+        };
 
         const currentYear = new Date().getFullYear();
 
@@ -79,13 +137,14 @@ class AddAlbumPage extends Component {
                     type="text"
                     placeholder="Album Subtitle"
                 />
-                <input
-                    name="artist"
-                    value={artist}
-                    onChange={this.onChange}
-                    type="text"
-                    placeholder="Artist"
-                />
+                <Autosuggest
+                    suggestions={suggestions}
+                    onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
+                    onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+                    onSuggestionSelected={this.onSuggestionSelected}
+                    getSuggestionValue={getSuggestionValue}
+                    renderSuggestion={renderSuggestion}
+                    inputProps={inputProps} />
                 <input
                     name="year"
                     value={year}
